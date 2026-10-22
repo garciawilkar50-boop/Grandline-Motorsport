@@ -11,8 +11,8 @@ Adapt the existing Godot racing project for landscape Android phones, including 
 - [ ] Run the main scene and inspect every menu and race scene for layout issues.
 - [ ] Confirm Android export templates, SDK/JDK, package identifier, version and signing.
 
-## Touch controls (not wired yet)
-The existing input manager reads InputMap actions. Touch controls should drive those same actions or expose equivalent virtual input values; do not create a separate physics implementation.
+## Touch controls (wired in code; device testing still required)
+The existing input manager reads InputMap actions. The new overlay writes virtual throttle, brake, steering and handbrake values that are merged into the existing player input accessors, keeping one vehicle-physics path. Pause and reset are wired to the race scene.
 
 Required in-race overlay:
 - Left steering zone: preferably a floating/virtual steering pad or left/right buttons.
@@ -48,4 +48,4 @@ Implementation requirements:
 - [ ] Produce and install a signed APK; confirm package ID and app icon.
 
 ## Important status
-The project configuration and documentation are updated on branch `android-identity-adaptation`. This is not yet a complete Android release: touch controls have not been connected to the live race scene, and no APK/build test has been performed in this environment.
+The project configuration, identity, virtual touch input and race overlay are updated on branch `android-identity-adaptation`. This is not yet a verified Android release: no Godot import/headless test or APK export has been performed in this environment. Multi-touch, device focus changes and control placement must be tested on a real Android device.
