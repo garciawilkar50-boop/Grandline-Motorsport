@@ -17,6 +17,8 @@ var brake_button: Button
 var handbrake_button: Button
 var pause_button: Button
 var reset_button: Button
+var left_held: bool = false
+var right_held: bool = false
 
 func _ready() -> void:
 	layer = 20
@@ -39,10 +41,10 @@ func _build_controls() -> void:
 	pause_button = _make_action_button("Ⅱ", "Pause race")
 	reset_button = _make_action_button("RESET", "Reset car")
 
-	left_button.button_down.connect(func(): InputManager.set_touch_steering(-1.0))
-	left_button.button_up.connect(_release_steering)
-	right_button.button_down.connect(func(): InputManager.set_touch_steering(1.0))
-	right_button.button_up.connect(_release_steering)
+	left_button.button_down.connect(func():\n\t\tleft_held = true\n\t\t_update_steering())
+	left_button.button_up.connect(func():\n\t\tleft_held = false\n\t\t_update_steering())
+	right_button.button_down.connect(func():\n\t\tright_held = true\n\t\t_update_steering())
+	right_button.button_up.connect(func():\n\t\tright_held = false\n\t\t_update_steering())
 	throttle_button.button_down.connect(func(): InputManager.set_touch_throttle(1.0))
 	throttle_button.button_up.connect(func(): InputManager.set_touch_throttle(0.0))
 	brake_button.button_down.connect(func(): InputManager.set_touch_brake(1.0))
@@ -103,10 +105,8 @@ func _layout() -> void:
 	reset_button.size = Vector2(unit * 1.0, unit * 0.48)
 	reset_button.position = Vector2(margin, margin)
 
-func _release_steering() -> void:
-	# Button-up events only clear steering when neither direction remains held.
-	if not left_button.button_pressed and not right_button.button_pressed:
-		InputManager.set_touch_steering(0.0)
+func _update_steering() -> void:
+	InputManager.set_touch_steering(float(right_held) - float(left_held))
 
 func _notification(what: int) -> void:
 	if what == NOTIFICATION_APPLICATION_FOCUS_OUT or what == NOTIFICATION_APPLICATION_PAUSED:
