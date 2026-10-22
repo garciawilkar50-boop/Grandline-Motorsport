@@ -3,6 +3,7 @@
 [application]
 
 config/name="Grandline Motorsport"
+config/icon="res://assets/brand/grandline-motorsport-icon.svg"
 run/main_scene="res://scenes/main.tscn"
 config/features=PackedStringArray("4.4")
 
