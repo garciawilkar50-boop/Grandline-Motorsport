@@ -1,46 +1,46 @@
-# Velocity
+# GRANDLINE MOTORSPORT
 
-A Forza-style 3D racing game built in Godot 4.6.1 with GDScript. All geometry is procedurally generated — no imported 3D models.
+**Race beyond the limit.** A 3D motorsport game built with Godot and GDScript, being adapted for Android.
 
-## Features
+Grandline Motorsport is the new identity for the former Velocity project. The goal is a mobile-first racing experience focused on Formula racing, with a clean pit-wall-inspired interface and responsive controls.
 
-- **4 Racing Modes:** Street (GT), Formula 1, Baja Desert Rally, NASCAR
-- **42 Cars** across 7 vehicle types (sedan, coupe, muscle, F1, stock car, buggy, trophy truck) — all procedurally generated meshes
-- **14 Tracks** — ovals, street circuits, mountain roads, point-to-point desert stages, and superspeedways
-- **Full Season Championships** for each mode with authentic points systems
-- **AI Opponents** with 3 difficulty levels and rubber-banding
-- **Split-Screen Multiplayer** (2 players)
-- **Garage & Progression** — earn credits, unlock cars
-- **HUD** with position, lap counter, speed, minimap, throttle/brake indicators
-- **DRS System** for F1 mode, slipstream drafting
+## Identity
 
-## Requirements
+- **Name:** Grandline Motorsport
+- **Tagline:** Race beyond the limit.
+- **Visual direction:** premium motorsport, near-black surfaces, white typography, racing red accents and restrained metallic gray
+- **Interface principles:** clear hierarchy, readable race telemetry, large touch targets, no gradients, no unnecessary visual effects
+- **Primary target:** Android phones; desktop input remains supported during development
 
-- [Godot 4.6.1](https://godotengine.org/download)
+## Existing game systems
 
-## Running
+The inherited project documents these systems; they still need to be verified in-engine before release:
 
-Open the project in Godot or run from the command line:
+- Multiple racing disciplines and procedural cars/tracks
+- Formula racing with AI opponents, championship progression and DRS
+- Race HUD, lap tracking, garage and player progression
+- Godot `VehicleBody3D` vehicle physics
 
-```bash
-godot --path /path/to/racing-game
-```
+## Android adaptation status
 
-## Controls
+This branch begins the mobile adaptation with Android-friendly project defaults:
+- App identity changed to **Grandline Motorsport**
+- Landscape orientation intended for racing gameplay
+- 1280×720 logical viewport with canvas-item scaling
+- Godot Compatibility renderer selected for broader mobile GPU support
+- MSAA disabled to reduce GPU cost on entry-level phones
 
-| Key | Action |
-|-----|--------|
-| W / S | Accelerate / Brake |
-| A / D | Steer |
-| Space | Handbrake |
-| Q | Look back |
-| R | Reset car |
-| ESC | Pause |
+These settings are a starting point, not proof of a working APK. The project still needs an in-engine import/build test on the target Godot version.
 
-Split-screen Player 2 uses Arrow Keys + Numpad.
+## Current controls and next steps
 
-## Architecture
+Keyboard and gamepad controls are registered by `autoloads/input_manager.gd`. On-screen touch controls have **not yet been wired into the race scene**. That is the next gameplay change: add a mobile steering control, throttle and brake buttons, pause/reset actions, and make sure simultaneous touch input works without breaking keyboard/gamepad support.
 
-The game uses Godot's VehicleBody3D physics at 120Hz with four singleton autoloads (InputManager, SaveManager, GameManager, RaceManager). Cars use a composition pattern — controllers (player or AI) are added as child nodes. All track geometry is generated procedurally in `_ready()` using ArrayMesh and CSG primitives.
+## Build requirements
 
-See [CLAUDE.md](CLAUDE.md) for detailed technical documentation.
+- Open the repository in the Godot version compatible with the project.
+- Import and run `res://scenes/main.tscn`.
+- Configure Android export templates and an Android SDK/JDK in Godot before exporting an APK.
+- Validate on a physical Android device, including performance, touch controls, orientation, safe areas and suspend/resume.
+
+See [ANDROID_ADAPTATION.md](ANDROID_ADAPTATION.md) for the implementation checklist.

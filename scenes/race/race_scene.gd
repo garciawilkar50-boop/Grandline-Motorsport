@@ -12,6 +12,7 @@ var race_hud: CanvasLayer
 var countdown_overlay: CanvasLayer
 var results_screen: CanvasLayer
 var pause_menu: CanvasLayer
+var mobile_controls: CanvasLayer
 var is_paused: bool = false
 
 func _ready() -> void:
@@ -196,7 +197,22 @@ func _setup_ui() -> void:
 	pause_menu.name = "PauseMenu"
 	pause_menu.set_script(preload("res://ui/pause/pause_menu.gd"))
 	add_child(pause_menu)
-	pause_menu.resumed.connect(func(): is_paused = false)
+	pause_menu.resumed.connect(func():
+		is_paused = false
+		if is_instance_valid(mobile_controls):
+			mobile_controls.visible = true
+	)
+
+	# Mobile controls are visible only in Android/mobile builds.
+	mobile_controls = CanvasLayer.new()
+	mobile_controls.name = "MobileRaceControls"
+	mobile_controls.set_script(preload("res://ui/mobile/mobile_race_controls.gd"))
+	add_child(mobile_controls)
+	mobile_controls.pause_requested.connect(_toggle_pause)
+	mobile_controls.reset_requested.connect(func():
+		if player_car and player_car.has_method("reset_to_track") and RaceManager.state == RaceManager.RaceState.RACING:
+			player_car.reset_to_track()
+	)
 
 func _process(_delta: float) -> void:
 	if InputManager.is_pause_pressed():
@@ -211,6 +227,8 @@ func _toggle_pause() -> void:
 		return
 	pause_menu.show_pause()
 	is_paused = true
+	if is_instance_valid(mobile_controls):
+		mobile_controls.visible = false
 
 var player_results_shown: bool = false
 
