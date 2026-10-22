@@ -1,7 +1,7 @@
 extends CanvasLayer
 
-## On-screen controls for single-player mobile races. Buttons are independent,
-## so steering, throttle and brake can be held simultaneously.
+## On-screen controls for single-player mobile races.
+## Independent buttons allow steering and throttle/brake to be held together.
 signal pause_requested
 signal reset_requested
 
@@ -41,18 +41,18 @@ func _build_controls() -> void:
 	pause_button = _make_action_button("Ⅱ", "Pause race")
 	reset_button = _make_action_button("RESET", "Reset car")
 
-	left_button.button_down.connect(func():\n\t\tleft_held = true\n\t\t_update_steering())
-	left_button.button_up.connect(func():\n\t\tleft_held = false\n\t\t_update_steering())
-	right_button.button_down.connect(func():\n\t\tright_held = true\n\t\t_update_steering())
-	right_button.button_up.connect(func():\n\t\tright_held = false\n\t\t_update_steering())
-	throttle_button.button_down.connect(func(): InputManager.set_touch_throttle(1.0))
-	throttle_button.button_up.connect(func(): InputManager.set_touch_throttle(0.0))
-	brake_button.button_down.connect(func(): InputManager.set_touch_brake(1.0))
-	brake_button.button_up.connect(func(): InputManager.set_touch_brake(0.0))
-	handbrake_button.button_down.connect(func(): InputManager.set_touch_handbrake(true))
-	handbrake_button.button_up.connect(func(): InputManager.set_touch_handbrake(false))
-	pause_button.pressed.connect(func(): pause_requested.emit())
-	reset_button.pressed.connect(func(): reset_requested.emit())
+	left_button.button_down.connect(_on_left_button_down)
+	left_button.button_up.connect(_on_left_button_up)
+	right_button.button_down.connect(_on_right_button_down)
+	right_button.button_up.connect(_on_right_button_up)
+	throttle_button.button_down.connect(_on_throttle_down)
+	throttle_button.button_up.connect(_on_throttle_up)
+	brake_button.button_down.connect(_on_brake_down)
+	brake_button.button_up.connect(_on_brake_up)
+	handbrake_button.button_down.connect(_on_handbrake_down)
+	handbrake_button.button_up.connect(_on_handbrake_up)
+	pause_button.pressed.connect(_on_pause_pressed)
+	reset_button.pressed.connect(_on_reset_pressed)
 
 func _make_hold_button(caption: String, description: String) -> Button:
 	var button := Button.new()
@@ -102,16 +102,58 @@ func _layout() -> void:
 	handbrake_button.position = Vector2(brake_button.position.x, brake_button.position.y - handbrake_button.size.y - 8.0)
 	pause_button.size = Vector2(unit * 0.56, unit * 0.48)
 	pause_button.position = Vector2(w - pause_button.size.x - margin, margin)
-	reset_button.size = Vector2(unit * 1.0, unit * 0.48)
+	reset_button.size = Vector2(unit, unit * 0.48)
 	reset_button.position = Vector2(margin, margin)
+
+func _on_left_button_down() -> void:
+	left_held = true
+	_update_steering()
+
+func _on_left_button_up() -> void:
+	left_held = false
+	_update_steering()
+
+func _on_right_button_down() -> void:
+	right_held = true
+	_update_steering()
+
+func _on_right_button_up() -> void:
+	right_held = false
+	_update_steering()
 
 func _update_steering() -> void:
 	InputManager.set_touch_steering(float(right_held) - float(left_held))
+
+func _on_throttle_down() -> void:
+	InputManager.set_touch_throttle(1.0)
+
+func _on_throttle_up() -> void:
+	InputManager.set_touch_throttle(0.0)
+
+func _on_brake_down() -> void:
+	InputManager.set_touch_brake(1.0)
+
+func _on_brake_up() -> void:
+	InputManager.set_touch_brake(0.0)
+
+func _on_handbrake_down() -> void:
+	InputManager.set_touch_handbrake(true)
+
+func _on_handbrake_up() -> void:
+	InputManager.set_touch_handbrake(false)
+
+func _on_pause_pressed() -> void:
+	pause_requested.emit()
+
+func _on_reset_pressed() -> void:
+	reset_requested.emit()
 
 func _notification(what: int) -> void:
 	if what == NOTIFICATION_APPLICATION_FOCUS_OUT or what == NOTIFICATION_APPLICATION_PAUSED:
 		if is_instance_valid(InputManager):
 			InputManager.clear_touch_inputs()
+		left_held = false
+		right_held = false
 
 func _exit_tree() -> void:
 	if is_instance_valid(InputManager):
