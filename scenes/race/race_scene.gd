@@ -198,6 +198,17 @@ func _setup_ui() -> void:
 	add_child(pause_menu)
 	pause_menu.resumed.connect(func(): is_paused = false)
 
+	# Mobile controls are visible only in Android/mobile builds.
+	var mobile_controls := CanvasLayer.new()
+	mobile_controls.name = "MobileRaceControls"
+	mobile_controls.set_script(preload("res://ui/mobile/mobile_race_controls.gd"))
+	add_child(mobile_controls)
+	mobile_controls.pause_requested.connect(_toggle_pause)
+	mobile_controls.reset_requested.connect(func():
+		if player_car and player_car.has_method("reset_to_track") and RaceManager.state == RaceManager.RaceState.RACING:
+			player_car.reset_to_track()
+	)
+
 func _process(_delta: float) -> void:
 	if InputManager.is_pause_pressed():
 		_toggle_pause()
